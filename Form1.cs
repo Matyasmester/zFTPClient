@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -52,6 +53,25 @@ namespace FTPClient
         private async void SendButton_Click(object sender, EventArgs e)
         {
             OutputBox.Text += await client.SendCommand(CommandBox.Text) + Environment.NewLine;
+        }
+
+        private async void UploadFileButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Multiselect = false;
+            
+            DialogResult result = dialog.ShowDialog(owner: this);
+
+            if(result == DialogResult.OK)
+            {
+                FileInfo info = new FileInfo(dialog.FileName);
+                OutputBox.Text += await client.SendCommand("UPLOAD " + info.FullName) + Environment.NewLine;
+            }
+            else
+            {
+                MessageBox.Show("Error selecting file.");
+                return;
+            }
         }
     }
 }

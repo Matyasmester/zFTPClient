@@ -49,7 +49,7 @@ namespace FTPClient
 
         public async Task<string> SendCommand(string command)
         {
-            string[] cmdSplit = command.Split(' ');
+            string[] cmdSplit = command.Split(new char[] { ' ' }, 2);
             string cmd = cmdSplit[0].ToLower();
 
             writer.WriteAsync(command + "\r\n").Wait();
@@ -59,6 +59,11 @@ namespace FTPClient
             {
                 MakeDataConnection();
                 await GetCopyOfFile(cmdSplit[1]);
+            }
+            if (cmd.Equals("UPLOAD".ToLower()))
+            {
+                MakeDataConnection();
+                UploadCopyOfFile(cmdSplit[1]);
             }
 
             char[] buffer = new char[1024];
@@ -73,6 +78,15 @@ namespace FTPClient
             return new string(buffer);
         }
 
+        private void UploadCopyOfFile(string fileName)
+        {
+            FileInfo info = new FileInfo(fileName);
+
+            byte[] encoded = EncodeSingleFile(info);
+
+            SendBytesToDataStream(encoded);
+        }
+
         public void Dispose()
         {
             client.Dispose();
@@ -85,12 +99,47 @@ namespace FTPClient
             dataStream.Dispose();
         }
 
+        private byte[] EncodeSingleFile(FileInfo info)
+        {
+            FileStream stream = info.OpenRead();
+
+            byte[] buffer = new byte[stream.Length];
+
+            stream.Read(buffer, 0, buffer.Length);
+
+            return buffer;
+        }
+
         private void MakeDataConnection()
         {
             if(dataClient.Connected) return;
 
             dataClient.Connect(endPoint.Address, endPoint.Port + 1);
             dataStream = dataClient.GetStream();
+        }
+
+        private void SendBytesToDataStream(byte[] bytes)
+        {
+            int bufferSize = 1024;
+
+            int dataLength = bytes.Length;
+
+            byte[] dataLengthBytes = BitConverter.GetBytes(dataLength);
+
+            dataStream.Write(dataLengthBytes, 0, dataLengthBytes.Length);
+
+            int bSent = 0;
+            int bLeft = dataLength;
+
+            while (bLeft > 0)
+            {
+                int currentSize = Math.Min(bLeft, bufferSize);
+
+                dataStream.Write(bytes, bSent, currentSize);
+
+                bSent += currentSize;
+                bLeft -= currentSize;
+            }
         }
 
         private async Task GetCopyOfFile(string name)

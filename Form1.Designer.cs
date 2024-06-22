@@ -37,6 +37,8 @@
             this.OutputBox = new System.Windows.Forms.RichTextBox();
             this.CommandBox = new System.Windows.Forms.TextBox();
             this.SendButton = new System.Windows.Forms.Button();
+            this.UploadFileButton = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.PortBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -140,12 +142,35 @@
             this.SendButton.UseVisualStyleBackColor = true;
             this.SendButton.Click += new System.EventHandler(this.SendButton_Click);
             // 
+            // UploadFileButton
+            // 
+            this.UploadFileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.UploadFileButton.Location = new System.Drawing.Point(12, 356);
+            this.UploadFileButton.Name = "UploadFileButton";
+            this.UploadFileButton.Size = new System.Drawing.Size(349, 82);
+            this.UploadFileButton.TabIndex = 10;
+            this.UploadFileButton.Text = "Upload file";
+            this.UploadFileButton.UseVisualStyleBackColor = true;
+            this.UploadFileButton.Click += new System.EventHandler(this.UploadFileButton_Click);
+            // 
+            // button2
+            // 
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button2.Location = new System.Drawing.Point(12, 478);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(349, 82);
+            this.button2.TabIndex = 11;
+            this.button2.Text = "Upload folder";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AcceptButton = this.SendButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1189, 672);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.UploadFileButton);
             this.Controls.Add(this.SendButton);
             this.Controls.Add(this.CommandBox);
             this.Controls.Add(this.OutputBox);
@@ -177,6 +202,8 @@
         private System.Windows.Forms.RichTextBox OutputBox;
         private System.Windows.Forms.TextBox CommandBox;
         private System.Windows.Forms.Button SendButton;
+        private System.Windows.Forms.Button UploadFileButton;
+        private System.Windows.Forms.Button button2;
     }
 }
 

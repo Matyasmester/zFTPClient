@@ -30,12 +30,12 @@ namespace FTPClient
 
         public FTPClient()
         {
-            if(!Directory.Exists(SharingFolderPath)) Directory.CreateDirectory(SharingFolderPath);
+            if (!Directory.Exists(SharingFolderPath)) Directory.CreateDirectory(SharingFolderPath);
             Directory.SetCurrentDirectory(SharingFolderPath);
         }
 
         public string Connect(IPAddress IP, int port)
-        {            
+        {
             endPoint = new IPEndPoint(IP, port);
             client.Connect(endPoint);
 
@@ -50,7 +50,9 @@ namespace FTPClient
         public async Task<string> SendCommand(string command)
         {
             string[] cmdSplit = command.Split(new char[] { ' ' }, 2);
+
             string cmd = cmdSplit[0].ToLower();
+            string arg = cmdSplit.Length > 1 ? cmdSplit[1] : null;
 
             writer.WriteAsync(command + "\r\n").Wait();
             writer.FlushAsync().Wait();
@@ -58,33 +60,21 @@ namespace FTPClient
             if (cmd.Equals("GET".ToLower()) || cmd.Equals("RETR".ToLower()))
             {
                 MakeDataConnection();
-                await GetCopyOfFile(cmdSplit[1]);
+                await GetCopyOfFile(arg);
             }
             if (cmd.Equals("UPLOAD".ToLower()))
             {
                 MakeDataConnection();
-                UploadCopyOfFile(cmdSplit[1]);
+                UploadCopyOfFile(arg);
             }
 
-            char[] buffer = new char[1024];
+            while (!stream.DataAvailable) await Task.Delay(40);
 
-            while(!stream.DataAvailable)
-            {
-                await Task.Delay(40);
-            }
+            char[] buffer = new char[client.Available];
 
-            while(stream.DataAvailable) await reader.ReadAsync(buffer, 0, buffer.Length);
+            while (stream.DataAvailable) await reader.ReadAsync(buffer, 0, buffer.Length);
 
             return new string(buffer);
-        }
-
-        private void UploadCopyOfFile(string fileName)
-        {
-            FileInfo info = new FileInfo(fileName);
-
-            byte[] encoded = EncodeSingleFile(info);
-
-            SendBytesToDataStream(encoded);
         }
 
         public void Dispose()
@@ -96,7 +86,26 @@ namespace FTPClient
             writer.Dispose();
 
             stream.Dispose();
-            dataStream.Dispose();
+            dataStream?.Dispose();
+        }
+
+        public bool IsConnected()
+        {
+            return client.Connected;
+        }
+
+        public bool IsDataConnected()
+        {
+            return dataClient.Connected;
+        }
+
+        private void UploadCopyOfFile(string fileName)
+        {
+            FileInfo info = new FileInfo(fileName);
+
+            byte[] encoded = EncodeSingleFile(info);
+
+            SendBytesToDataStream(encoded);
         }
 
         private byte[] EncodeSingleFile(FileInfo info)

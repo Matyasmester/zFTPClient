@@ -39,6 +39,7 @@
             this.SendButton = new System.Windows.Forms.Button();
             this.UploadFileButton = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.SharedFolderTreeView = new System.Windows.Forms.TreeView();
             ((System.ComponentModel.ISupportInitialize)(this.PortBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -115,18 +116,18 @@
             // OutputBox
             // 
             this.OutputBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.OutputBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.OutputBox.Location = new System.Drawing.Point(372, 124);
+            this.OutputBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.OutputBox.Location = new System.Drawing.Point(715, 124);
             this.OutputBox.Name = "OutputBox";
             this.OutputBox.ReadOnly = true;
-            this.OutputBox.Size = new System.Drawing.Size(793, 525);
+            this.OutputBox.Size = new System.Drawing.Size(450, 525);
             this.OutputBox.TabIndex = 7;
             this.OutputBox.Text = "";
             // 
             // CommandBox
             // 
             this.CommandBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.CommandBox.Location = new System.Drawing.Point(12, 189);
+            this.CommandBox.Location = new System.Drawing.Point(354, 209);
             this.CommandBox.Name = "CommandBox";
             this.CommandBox.Size = new System.Drawing.Size(333, 28);
             this.CommandBox.TabIndex = 8;
@@ -134,7 +135,7 @@
             // SendButton
             // 
             this.SendButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.SendButton.Location = new System.Drawing.Point(67, 223);
+            this.SendButton.Location = new System.Drawing.Point(409, 243);
             this.SendButton.Name = "SendButton";
             this.SendButton.Size = new System.Drawing.Size(232, 82);
             this.SendButton.TabIndex = 9;
@@ -145,7 +146,7 @@
             // UploadFileButton
             // 
             this.UploadFileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.UploadFileButton.Location = new System.Drawing.Point(12, 356);
+            this.UploadFileButton.Location = new System.Drawing.Point(354, 376);
             this.UploadFileButton.Name = "UploadFileButton";
             this.UploadFileButton.Size = new System.Drawing.Size(349, 82);
             this.UploadFileButton.TabIndex = 10;
@@ -156,19 +157,31 @@
             // button2
             // 
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button2.Location = new System.Drawing.Point(12, 478);
+            this.button2.Location = new System.Drawing.Point(354, 498);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(349, 82);
             this.button2.TabIndex = 11;
             this.button2.Text = "Upload folder";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // SharedFolderTreeView
+            // 
+            this.SharedFolderTreeView.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.SharedFolderTreeView.Location = new System.Drawing.Point(12, 124);
+            this.SharedFolderTreeView.Name = "SharedFolderTreeView";
+            this.SharedFolderTreeView.Size = new System.Drawing.Size(325, 525);
+            this.SharedFolderTreeView.TabIndex = 12;
+            this.SharedFolderTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SharedFolderTreeView_AfterSelect);
             // 
             // MainForm
             // 
             this.AcceptButton = this.SendButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1189, 672);
+            this.Controls.Add(this.SharedFolderTreeView);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.UploadFileButton);
             this.Controls.Add(this.SendButton);
@@ -204,6 +217,7 @@
         private System.Windows.Forms.Button SendButton;
         private System.Windows.Forms.Button UploadFileButton;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TreeView SharedFolderTreeView;
     }
 }
 

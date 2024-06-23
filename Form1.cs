@@ -34,7 +34,7 @@ namespace FTPClient
 
         private void IPAddressBox_TextChanged(object sender, EventArgs e)
         {
-
+            
         }
 
         private void IsLocalhostBox_CheckedChanged(object sender, EventArgs e)
@@ -55,6 +55,49 @@ namespace FTPClient
             OutputBox.Text += await client.SendCommand(CommandBox.Text) + Environment.NewLine;
         }
 
+        private async Task PopulateTreeView()
+        {
+            string text = await client.SendCommand("RECDIR");
+
+            string[] lines = text.Split(new string[] {Environment.NewLine}, StringSplitOptions.None);
+
+            string rootDirName = lines[0];
+
+            TreeNode root = new TreeNode(rootDirName);
+
+            List<KeyValuePair<int, TreeNode>> rootNodesByLevel = new List<KeyValuePair<int, TreeNode>>();
+
+            rootNodesByLevel.Add(new KeyValuePair<int, TreeNode>(0, root));
+
+            SharedFolderTreeView.Nodes.Add(root);
+
+            TreeNode prevNode = root;
+
+            int prevLevel = 0;
+
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+
+                if(line.Equals(string.Empty) || line.Contains("\0")) continue;
+
+                string[] split = line.Split(':');
+                int level = Convert.ToInt32(split[0]);
+                
+                TreeNode node = new TreeNode(split[1]);
+
+                if (level > prevLevel) 
+                {
+                    prevLevel = level;
+                    rootNodesByLevel.Add(new KeyValuePair<int, TreeNode>(level, prevNode));
+                }
+
+                rootNodesByLevel.First(x => x.Key == level).Value.Nodes.Add(node);
+
+                prevNode = node;
+            }
+        }
+
         private async void UploadFileButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
@@ -72,6 +115,17 @@ namespace FTPClient
                 MessageBox.Show("Error selecting file.");
                 return;
             }
+        }
+
+        private void SharedFolderTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            SharedFolderTreeView.Nodes.Clear();
+            await PopulateTreeView();
         }
     }
 }

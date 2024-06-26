@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
@@ -34,7 +35,7 @@ namespace FTPClient
             Directory.SetCurrentDirectory(SharingFolderPath);
         }
 
-        public string Connect(IPAddress IP, int port)
+        public string Connect(IPAddress IP, int port, int dataPort)
         {
             endPoint = new IPEndPoint(IP, port);
             client.Connect(endPoint);
@@ -43,6 +44,8 @@ namespace FTPClient
 
             reader = new StreamReader(stream);
             writer = new StreamWriter(stream);
+
+            MakeDataConnection(dataPort);
 
             return reader.ReadLine() + "\r\n";
         }
@@ -57,17 +60,13 @@ namespace FTPClient
             writer.WriteAsync(command + "\r\n").Wait();
             writer.FlushAsync().Wait();
 
-            if (cmd.Equals("GET".ToLower()) || cmd.Equals("RETR".ToLower()))
+            if (cmd.Equals("get") || cmd.Equals("retr"))
             {
-                MakeDataConnection();
                 await GetCopyOfFile(arg);
             }
-            if (cmd.Equals("UPLOAD".ToLower()))
-            {
-                MakeDataConnection();
-                UploadCopyOfFile(arg);
-            }
-
+            if (cmd.Equals("upload")) UploadFile(arg);
+            if(cmd.Equals("fupload")) UploadFolder(arg);
+            
             while (!stream.DataAvailable) await Task.Delay(40);
 
             char[] buffer = new char[client.Available];
@@ -79,13 +78,13 @@ namespace FTPClient
 
         public void Dispose()
         {
-            client.Dispose();
-            dataClient.Dispose();
+            client.Close();
+            dataClient.Close();
+            
+            reader?.Dispose();
+            writer?.Dispose();
 
-            reader.Dispose();
-            writer.Dispose();
-
-            stream.Dispose();
+            stream?.Dispose();
             dataStream?.Dispose();
         }
 
@@ -99,13 +98,41 @@ namespace FTPClient
             return dataClient.Connected;
         }
 
-        private void UploadCopyOfFile(string fileName)
+        private void UploadFile(string path)
         {
-            FileInfo info = new FileInfo(fileName);
+            FileInfo info = new FileInfo(path);
 
             byte[] encoded = EncodeSingleFile(info);
 
             SendBytesToDataStream(encoded);
+        }
+
+        private void UploadFolder(string path)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(path);
+
+            string fileNames = string.Empty;
+
+            foreach(FileInfo info in dirInfo.GetFiles())
+            {
+                fileNames += info.Name + "\0";
+            }
+
+            byte[] fileNamesBytes = Encoding.UTF8.GetBytes(fileNames);
+            byte[] fileNamesLenBytes = BitConverter.GetBytes(fileNames.Length);
+
+            NetworkStream dataStream = dataClient.GetStream();
+
+            dataStream.Write(fileNamesLenBytes, 0, fileNamesLenBytes.Length);
+            dataStream.Write(fileNamesBytes, 0, fileNamesBytes.Length);
+
+            foreach (FileSystemInfo sysInfo in dirInfo.GetFileSystemInfos())
+            {
+                string entryPath = sysInfo.FullName;
+                if(File.Exists(entryPath)) UploadFile(entryPath);
+
+                else UploadFolder(entryPath);
+            }
         }
 
         private byte[] EncodeSingleFile(FileInfo info)
@@ -119,11 +146,11 @@ namespace FTPClient
             return buffer;
         }
 
-        private void MakeDataConnection()
+        private void MakeDataConnection(int dataPort)
         {
             if(dataClient.Connected) return;
 
-            dataClient.Connect(endPoint.Address, endPoint.Port + 1);
+            dataClient.Connect(endPoint.Address, dataPort);
             dataStream = dataClient.GetStream();
         }
 

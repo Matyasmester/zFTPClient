@@ -14,12 +14,24 @@ namespace FTPClient
 {
     public partial class MainForm : Form
     {
-        FTPClient client;
+        private FTPClient client;
+
+        private const int FILE_IMG_INDEX = 0;
+        private const int FOLDER_IMG_INDEX = 1;
 
         public MainForm()
         {
             InitializeComponent();
             this.FormClosing += MainForm_FormClosing;
+
+            Image file_img = Image.FromFile(@"assets\file_icon.png");
+            Image folder_img = Image.FromFile(@"assets\folder_icon.png");
+
+            ImageList list = new ImageList();
+            list.Images.Add(file_img);
+            list.Images.Add(folder_img);
+
+            SharedFolderTreeView.ImageList = list;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -42,21 +54,30 @@ namespace FTPClient
             IPAddressBox.Enabled = !IsLocalhostBox.Checked;
         }
 
-        private void ConnectButton_Click(object sender, EventArgs e)
+        private async void ConnectButton_Click(object sender, EventArgs e)
         {
             IPAddress IP = IsLocalhostBox.Checked ? IPAddress.Parse("127.0.0.1") : IPAddress.Parse(IPAddressBox.Text);
             int port = (int)PortBox.Value;
+            int dataPort = (int)DataPortBox.Value;
 
-            OutputBox.Text = client.Connect(IP, port);
-        }
+            try { MessageBox.Show(client.Connect(IP, port, dataPort)); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error connecting to client:\n " + ex.Message);
+                return;
+            }
+            bool isConnected = client.IsConnected();
 
-        private async void SendButton_Click(object sender, EventArgs e)
-        {
-            OutputBox.Text += await client.SendCommand(CommandBox.Text) + Environment.NewLine;
+            UploadFileButton.Enabled = isConnected;
+            UploadFolderButton.Enabled = isConnected;
+
+            await PopulateTreeView();
         }
 
         private async Task PopulateTreeView()
         {
+            SharedFolderTreeView.Nodes.Clear();
+            
             string text = await client.SendCommand("RECDIR");
 
             string[] lines = text.Split(new string[] {Environment.NewLine}, StringSplitOptions.None);
@@ -64,6 +85,8 @@ namespace FTPClient
             string rootDirName = lines[0];
 
             TreeNode root = new TreeNode(rootDirName);
+            root.ImageIndex = FOLDER_IMG_INDEX;
+            root.SelectedImageIndex = FOLDER_IMG_INDEX;
 
             List<KeyValuePair<int, TreeNode>> rootNodesByLevel = new List<KeyValuePair<int, TreeNode>>();
 
@@ -83,10 +106,22 @@ namespace FTPClient
 
                 string[] split = line.Split(':');
                 int level = Convert.ToInt32(split[0]);
+                string name = split[1];
                 
-                TreeNode node = new TreeNode(split[1]);
+                TreeNode node = new TreeNode(name);
 
-                if (level > prevLevel) 
+                if (Path.GetExtension(name).Equals(string.Empty))
+                {
+                    node.ImageIndex = FOLDER_IMG_INDEX;
+                    node.SelectedImageIndex = FOLDER_IMG_INDEX;
+                }
+                else
+                {
+                    node.ImageIndex = FILE_IMG_INDEX;
+                    node.SelectedImageIndex = FILE_IMG_INDEX;
+                }
+
+                if (level != prevLevel) 
                 {
                     prevLevel = level;
                     rootNodesByLevel.Add(new KeyValuePair<int, TreeNode>(level, prevNode));
@@ -108,13 +143,15 @@ namespace FTPClient
             if(result == DialogResult.OK)
             {
                 FileInfo info = new FileInfo(dialog.FileName);
-                OutputBox.Text += await client.SendCommand("UPLOAD " + info.FullName) + Environment.NewLine;
+                MessageBox.Show(await client.SendCommand("UPLOAD " + info.FullName));
             }
             else
             {
                 MessageBox.Show("Error selecting file.");
                 return;
             }
+
+            await PopulateTreeView();
         }
 
         private void SharedFolderTreeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -124,7 +161,17 @@ namespace FTPClient
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            SharedFolderTreeView.Nodes.Clear();
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            dialog.ShowNewFolderButton = false;
+
+            DialogResult result = dialog.ShowDialog(owner: this);
+
+            if(result == DialogResult.OK)
+            {
+                string selectedPath = dialog.SelectedPath;
+                MessageBox.Show(await client.SendCommand("FUPLOAD " + selectedPath));
+            }
+
             await PopulateTreeView();
         }
     }

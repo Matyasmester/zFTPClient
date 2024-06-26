@@ -34,13 +34,14 @@
             this.label2 = new System.Windows.Forms.Label();
             this.PortBox = new System.Windows.Forms.NumericUpDown();
             this.ConnectButton = new System.Windows.Forms.Button();
-            this.OutputBox = new System.Windows.Forms.RichTextBox();
-            this.CommandBox = new System.Windows.Forms.TextBox();
-            this.SendButton = new System.Windows.Forms.Button();
             this.UploadFileButton = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.UploadFolderButton = new System.Windows.Forms.Button();
             this.SharedFolderTreeView = new System.Windows.Forms.TreeView();
+            this.label3 = new System.Windows.Forms.Label();
+            this.DataPortBox = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.PortBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DataPortBox)).BeginInit();
             this.SuspendLayout();
             // 
             // IPAddressBox
@@ -113,80 +114,90 @@
             this.ConnectButton.UseVisualStyleBackColor = true;
             this.ConnectButton.Click += new System.EventHandler(this.ConnectButton_Click);
             // 
-            // OutputBox
-            // 
-            this.OutputBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.OutputBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.OutputBox.Location = new System.Drawing.Point(715, 124);
-            this.OutputBox.Name = "OutputBox";
-            this.OutputBox.ReadOnly = true;
-            this.OutputBox.Size = new System.Drawing.Size(450, 525);
-            this.OutputBox.TabIndex = 7;
-            this.OutputBox.Text = "";
-            // 
-            // CommandBox
-            // 
-            this.CommandBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.CommandBox.Location = new System.Drawing.Point(354, 209);
-            this.CommandBox.Name = "CommandBox";
-            this.CommandBox.Size = new System.Drawing.Size(333, 28);
-            this.CommandBox.TabIndex = 8;
-            // 
-            // SendButton
-            // 
-            this.SendButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.SendButton.Location = new System.Drawing.Point(409, 243);
-            this.SendButton.Name = "SendButton";
-            this.SendButton.Size = new System.Drawing.Size(232, 82);
-            this.SendButton.TabIndex = 9;
-            this.SendButton.Text = "Send";
-            this.SendButton.UseVisualStyleBackColor = true;
-            this.SendButton.Click += new System.EventHandler(this.SendButton_Click);
-            // 
             // UploadFileButton
             // 
+            this.UploadFileButton.Enabled = false;
             this.UploadFileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.UploadFileButton.Location = new System.Drawing.Point(354, 376);
+            this.UploadFileButton.Location = new System.Drawing.Point(653, 170);
             this.UploadFileButton.Name = "UploadFileButton";
-            this.UploadFileButton.Size = new System.Drawing.Size(349, 82);
+            this.UploadFileButton.Size = new System.Drawing.Size(430, 126);
             this.UploadFileButton.TabIndex = 10;
             this.UploadFileButton.Text = "Upload file";
             this.UploadFileButton.UseVisualStyleBackColor = true;
             this.UploadFileButton.Click += new System.EventHandler(this.UploadFileButton_Click);
             // 
-            // button2
+            // UploadFolderButton
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button2.Location = new System.Drawing.Point(354, 498);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(349, 82);
-            this.button2.TabIndex = 11;
-            this.button2.Text = "Upload folder";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.UploadFolderButton.Enabled = false;
+            this.UploadFolderButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.UploadFolderButton.Location = new System.Drawing.Point(653, 347);
+            this.UploadFolderButton.Name = "UploadFolderButton";
+            this.UploadFolderButton.Size = new System.Drawing.Size(430, 126);
+            this.UploadFolderButton.TabIndex = 11;
+            this.UploadFolderButton.Text = "Upload folder";
+            this.UploadFolderButton.UseVisualStyleBackColor = true;
+            this.UploadFolderButton.Click += new System.EventHandler(this.button2_Click);
             // 
             // SharedFolderTreeView
             // 
             this.SharedFolderTreeView.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.SharedFolderTreeView.HotTracking = true;
             this.SharedFolderTreeView.Location = new System.Drawing.Point(12, 124);
             this.SharedFolderTreeView.Name = "SharedFolderTreeView";
-            this.SharedFolderTreeView.Size = new System.Drawing.Size(325, 525);
+            this.SharedFolderTreeView.Size = new System.Drawing.Size(566, 525);
             this.SharedFolderTreeView.TabIndex = 12;
             this.SharedFolderTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SharedFolderTreeView_AfterSelect);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label3.Location = new System.Drawing.Point(184, 96);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(139, 25);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Files on server";
+            // 
+            // DataPortBox
+            // 
+            this.DataPortBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.DataPortBox.Location = new System.Drawing.Point(769, 64);
+            this.DataPortBox.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.DataPortBox.Name = "DataPortBox";
+            this.DataPortBox.Size = new System.Drawing.Size(120, 34);
+            this.DataPortBox.TabIndex = 14;
+            this.DataPortBox.Value = new decimal(new int[] {
+            5556,
+            0,
+            0,
+            0});
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label4.Location = new System.Drawing.Point(664, 69);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(99, 25);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Data Port:";
+            // 
             // MainForm
             // 
-            this.AcceptButton = this.SendButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1189, 672);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.DataPortBox);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.SharedFolderTreeView);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.UploadFolderButton);
             this.Controls.Add(this.UploadFileButton);
-            this.Controls.Add(this.SendButton);
-            this.Controls.Add(this.CommandBox);
-            this.Controls.Add(this.OutputBox);
             this.Controls.Add(this.ConnectButton);
             this.Controls.Add(this.PortBox);
             this.Controls.Add(this.label2);
@@ -199,6 +210,7 @@
             this.Text = "FTP Client";
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.PortBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DataPortBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -212,12 +224,12 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown PortBox;
         private System.Windows.Forms.Button ConnectButton;
-        private System.Windows.Forms.RichTextBox OutputBox;
-        private System.Windows.Forms.TextBox CommandBox;
-        private System.Windows.Forms.Button SendButton;
         private System.Windows.Forms.Button UploadFileButton;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button UploadFolderButton;
         private System.Windows.Forms.TreeView SharedFolderTreeView;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.NumericUpDown DataPortBox;
+        private System.Windows.Forms.Label label4;
     }
 }
 

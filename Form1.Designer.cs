@@ -40,6 +40,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.DataPortBox = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
+            this.DownloadButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.PortBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataPortBox)).BeginInit();
             this.SuspendLayout();
@@ -118,7 +119,7 @@
             // 
             this.UploadFileButton.Enabled = false;
             this.UploadFileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.UploadFileButton.Location = new System.Drawing.Point(653, 170);
+            this.UploadFileButton.Location = new System.Drawing.Point(669, 124);
             this.UploadFileButton.Name = "UploadFileButton";
             this.UploadFileButton.Size = new System.Drawing.Size(430, 126);
             this.UploadFileButton.TabIndex = 10;
@@ -130,7 +131,7 @@
             // 
             this.UploadFolderButton.Enabled = false;
             this.UploadFolderButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.UploadFolderButton.Location = new System.Drawing.Point(653, 347);
+            this.UploadFolderButton.Location = new System.Drawing.Point(669, 323);
             this.UploadFolderButton.Name = "UploadFolderButton";
             this.UploadFolderButton.Size = new System.Drawing.Size(430, 126);
             this.UploadFolderButton.TabIndex = 11;
@@ -152,11 +153,12 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label3.Location = new System.Drawing.Point(184, 96);
+            this.label3.Location = new System.Drawing.Point(211, 96);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(139, 25);
             this.label3.TabIndex = 13;
             this.label3.Text = "Files on server";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // DataPortBox
             // 
@@ -186,12 +188,26 @@
             this.label4.TabIndex = 15;
             this.label4.Text = "Data Port:";
             // 
+            // DownloadButton
+            // 
+            this.DownloadButton.Enabled = false;
+            this.DownloadButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.DownloadButton.Location = new System.Drawing.Point(669, 523);
+            this.DownloadButton.Name = "DownloadButton";
+            this.DownloadButton.Size = new System.Drawing.Size(430, 126);
+            this.DownloadButton.TabIndex = 16;
+            this.DownloadButton.Text = "Download selection";
+            this.DownloadButton.UseVisualStyleBackColor = true;
+            this.DownloadButton.Click += new System.EventHandler(this.DownloadButton_Click);
+            // 
             // MainForm
             // 
+            this.AcceptButton = this.DownloadButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1189, 672);
+            this.Controls.Add(this.DownloadButton);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.DataPortBox);
             this.Controls.Add(this.label3);
@@ -230,6 +246,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown DataPortBox;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button DownloadButton;
     }
 }
 

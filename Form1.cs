@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,6 +19,8 @@ namespace FTPClient
 
         private const int FILE_IMG_INDEX = 0;
         private const int FOLDER_IMG_INDEX = 1;
+
+        private string currentSelectedPath = string.Empty;
 
         public MainForm()
         {
@@ -70,6 +73,7 @@ namespace FTPClient
 
             UploadFileButton.Enabled = isConnected;
             UploadFolderButton.Enabled = isConnected;
+            DownloadButton.Enabled = isConnected;
 
             await PopulateTreeView();
         }
@@ -84,19 +88,14 @@ namespace FTPClient
 
             string rootDirName = lines[0];
 
+            List<TreeNode> nodeList = new List<TreeNode>();
+
             TreeNode root = new TreeNode(rootDirName);
             root.ImageIndex = FOLDER_IMG_INDEX;
             root.SelectedImageIndex = FOLDER_IMG_INDEX;
 
-            List<KeyValuePair<int, TreeNode>> rootNodesByLevel = new List<KeyValuePair<int, TreeNode>>();
-
-            rootNodesByLevel.Add(new KeyValuePair<int, TreeNode>(0, root));
-
             SharedFolderTreeView.Nodes.Add(root);
-
-            TreeNode prevNode = root;
-
-            int prevLevel = 0;
+            nodeList.Add(root);
 
             for (int i = 1; i < lines.Length; i++)
             {
@@ -105,11 +104,12 @@ namespace FTPClient
                 if(line.Equals(string.Empty) || line.Contains("\0")) continue;
 
                 string[] split = line.Split(':');
-                int level = Convert.ToInt32(split[0]);
+
+                string rootName = split[0];
                 string name = split[1];
                 
                 TreeNode node = new TreeNode(name);
-
+                
                 if (Path.GetExtension(name).Equals(string.Empty))
                 {
                     node.ImageIndex = FOLDER_IMG_INDEX;
@@ -121,15 +121,8 @@ namespace FTPClient
                     node.SelectedImageIndex = FILE_IMG_INDEX;
                 }
 
-                if (level != prevLevel) 
-                {
-                    prevLevel = level;
-                    rootNodesByLevel.Add(new KeyValuePair<int, TreeNode>(level, prevNode));
-                }
-
-                rootNodesByLevel.First(x => x.Key == level).Value.Nodes.Add(node);
-
-                prevNode = node;
+                nodeList.First(x => x.Text.Equals(rootName)).Nodes.Add(node);
+                nodeList.Add(node);
             }
         }
 
@@ -154,9 +147,25 @@ namespace FTPClient
             await PopulateTreeView();
         }
 
-        private void SharedFolderTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        private async void SharedFolderTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            TreeNode node = e.Node;
+            string nodePath = node.FullPath;
 
+            if (!Path.GetExtension(node.Text).Equals(string.Empty))
+            {
+                currentSelectedPath = nodePath;
+                return;
+            }
+
+            TreeView treeView = node.TreeView;
+            string rootNodeText = treeView.Nodes[0].Text;
+
+            if (node.Text.Equals(rootNodeText)) return;
+
+            MessageBox.Show(await client.SendCommand("CWD " + nodePath));
+
+            currentSelectedPath = nodePath;
         }
 
         private async void button2_Click(object sender, EventArgs e)
@@ -173,6 +182,22 @@ namespace FTPClient
             }
 
             await PopulateTreeView();
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void DownloadButton_Click(object sender, EventArgs e)
+        {
+            if(string.IsNullOrEmpty(currentSelectedPath)) return;
+
+            if (Path.GetExtension(Path.GetFileName(currentSelectedPath)).Equals(string.Empty)) return;
+
+            string fileName = Path.GetFileName(currentSelectedPath);
+
+            MessageBox.Show(await client.SendCommand("GET " + fileName));
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -65,7 +65,7 @@ namespace FTPClient
                 await GetCopyOfFile(arg);
             }
             if (cmd.Equals("upload")) UploadFile(arg);
-            if(cmd.Equals("fupload")) UploadFolder(arg);
+            if (cmd.Equals("fupload")) UploadFolder(arg);
             
             while (!stream.DataAvailable) await Task.Delay(40);
 
@@ -111,28 +111,17 @@ namespace FTPClient
         {
             DirectoryInfo dirInfo = new DirectoryInfo(path);
 
-            string fileNames = string.Empty;
+            string fileName = dirInfo.Name + ".zip";
 
-            foreach(FileInfo info in dirInfo.GetFiles())
-            {
-                fileNames += info.Name + "\0";
-            }
+            string archivePath = Path.Combine(SharingFolderPath, fileName);
 
-            byte[] fileNamesBytes = Encoding.UTF8.GetBytes(fileNames);
-            byte[] fileNamesLenBytes = BitConverter.GetBytes(fileNames.Length);
+            if (File.Exists(archivePath)) File.Delete(archivePath);
 
-            NetworkStream dataStream = dataClient.GetStream();
+            ZipFile.CreateFromDirectory(path, archivePath);
 
-            dataStream.Write(fileNamesLenBytes, 0, fileNamesLenBytes.Length);
-            dataStream.Write(fileNamesBytes, 0, fileNamesBytes.Length);
+            UploadFile(archivePath);
 
-            foreach (FileSystemInfo sysInfo in dirInfo.GetFileSystemInfos())
-            {
-                string entryPath = sysInfo.FullName;
-                if(File.Exists(entryPath)) UploadFile(entryPath);
-
-                else UploadFolder(entryPath);
-            }
+            File.Delete(archivePath);
         }
 
         private byte[] EncodeSingleFile(FileInfo info)
@@ -142,6 +131,8 @@ namespace FTPClient
             byte[] buffer = new byte[stream.Length];
 
             stream.Read(buffer, 0, buffer.Length);
+
+            stream.Dispose();
 
             return buffer;
         }

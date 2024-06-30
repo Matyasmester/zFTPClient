@@ -161,7 +161,11 @@ namespace FTPClient
             TreeView treeView = node.TreeView;
             string rootNodeText = treeView.Nodes[0].Text;
 
-            if (node.Text.Equals(rootNodeText)) return;
+            if (node.Text.Equals(rootNodeText))
+            {
+                MessageBox.Show(await client.SendCommand("RSTDIR"));
+                return;
+            };
 
             MessageBox.Show(await client.SendCommand("CWD " + nodePath));
 

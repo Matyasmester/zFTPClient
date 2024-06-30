@@ -142,6 +142,7 @@
             // SharedFolderTreeView
             // 
             this.SharedFolderTreeView.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.SharedFolderTreeView.HideSelection = false;
             this.SharedFolderTreeView.HotTracking = true;
             this.SharedFolderTreeView.Location = new System.Drawing.Point(12, 124);
             this.SharedFolderTreeView.Name = "SharedFolderTreeView";
